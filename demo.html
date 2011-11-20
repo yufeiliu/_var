@@ -1,0 +1,40 @@
+<!--
+Demo for _var - a javascript library for seamless variable-to-DOM binding
+@yufeiliu
+released under MIT license
+-->
+<html>
+<head>
+<script src="_var.js" type="text/javascript"></script>
+<style>
+#clock-container {
+	padding:5px;
+	border:1px solid black;
+	width:500px;
+	margin-left:auto;
+	margin-right:auto;
+	font-family:"Helvetica Neue";
+	font-size:13px;
+}
+strong {
+	color: red;
+}
+</style>
+</head>
+
+<div id="clock-container">
+	It has been <strong id="clock-view"></strong> seconds since you refereshed this page.
+</div>
+
+<script>
+	_var("counter", document.getElementById("clock-view"));
+
+	counter = 0;
+
+	function startTimer() {
+		counter++;
+		setTimeout('startTimer()',1000);
+	}
+	startTimer();
+</script>
+</html>
