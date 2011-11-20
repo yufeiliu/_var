@@ -28,11 +28,14 @@ strong {
 
 <script>
 	counter = 0;
-	_var("counter", document.getElementById("clock-view"));
-
-	//Reset after 30 seconds
-	_var("counter", function(val) { if (counter==30) counter = 1;} );
-
+	_var("counter")
+		.bind(document.getElementById("clock-view"))
+		//Remove binding after 30 seconds
+		.bind(function(val) {
+			if (val==30) {
+				_var("counter").unbind(document.getElementById("clock-view"));
+			}
+		});
 
 	function startTimer() {
 		counter++;

@@ -6,67 +6,83 @@
 */
 
 if (typeof(_var)==="undefined") {
-  var _var = {};
+  var _var;
   (function() {
     bindings = {};
     _var = function() {
-      var ar = [];
-      for (var i=0; i<arguments.length; i++) ar.push(arguments[i]);
 
-      if (ar.length<1) return this.bindings;
-      var vname = ar.shift();
-      if (ar.length<1) return (this.bindings)[vname];
+      if (arguments.length<1) return this.bindings;
+      var vname = arguments[0];
 
-      var trigger = function(val, vname) {
-        for (var i=0; i<bindings[vname].length; i++) {
-          var cur = bindings[vname][i];
-          if (cur && {}.toString.call(cur)==='[object Function]') {
-            cur(val);
-          } else if (cur && cur.tagName && cur.nodeName) {
-            cur.innerHTML = val;
+      var self = this;
+      var handler = {
+        bind: function(target) {
+          var trigger = function(val, vname) {
+            for (var i=0; i<self.bindings[vname].length; i++) {
+              var cur = self.bindings[vname][i];
+              if (cur && {}.toString.call(cur)==='[object Function]') {
+                cur(val);
+              } else if (cur && cur.tagName && cur.nodeName) {
+                cur.innerHTML = val;
+              }
+            }
+          };
+
+          var vnames = vname.split(".");
+          var base = vnames.pop();
+          var obj = window;
+          for (var i=0; i<vnames.length; i++) {
+            obj = obj[vnames[i]];
           }
-        }
+
+          var skip = true;
+          if (typeof(self.bindings[vname])==="undefined") {
+            self.bindings[vname] = [];
+            skip = false;
+          }
+
+          for (var i = 0; i < self.bindings[vname].length; i++) {
+            if (self.bindings[vname][i]===target) return handler;
+          }
+
+          //TODO: check for already existing binding
+          self.bindings[vname].push(target);
+
+          var needInit = typeof(obj[base])!=="undefined";
+          if (needInit) {
+            trigger(obj[base], vname);
+          }
+
+          if (skip) return handler;
+          (function(vname, trigger) {
+            var bound;
+            if (needInit) bound = obj[base];
+            Object.defineProperty(obj, base, {
+              get: function() {return bound;},
+              set: function(val) {bound = val; trigger(val, vname);}
+            });
+          })(vname, trigger);
+
+          return handler;
+
+        },
+        unbind: function(target) {
+          if (typeof(target)==="number") {
+            self.bindings[vname].splice(target,1);
+          } else {
+            for (var i = 0; i < self.bindings[vname].length; i++) {
+              if (self.bindings[vname][i]===target) {
+                self.bindings[vname].splice(i,1);
+                break;
+              }
+            }
+          }
+          return handler;
+        },
+        bindings: self.bindings[vname]
       };
 
-      var vnames = vname.split(".");
-      var base = vnames.pop();
-      var obj = window;
-      for (var i=0; i<vnames.length; i++) {
-        obj = obj[vnames[i]];
-      }
-
-      var skip = true;
-      if (typeof(bindings[vname])==="undefined") {
-        bindings[vname] = [];
-        skip = false;
-      }
-      for (var i=0; i<ar.length; i++) {
-        var cur = ar[i];
-
-        if (cur.constructor.toString().indexOf("Array") !== -1) {
-          for (var j=0; j<cur.length; j++) {
-             bindings[vname].push(cur[j]);
-          }
-        } else {
-           bindings[vname].push(cur);
-        }
-      }
-
-      var needInit = typeof(obj[base])!=="undefined";
-      if (needInit) {
-        console.log(bindings[vname]);
-        trigger(obj[base], vname);
-      }
-
-      if (skip) return;
-      (function(vname, trigger) {
-        var bound;
-        if (needInit) bound = obj[base];
-        Object.defineProperty(obj, base, {
-          get: function() {return bound;},
-          set: function(val) {bound = val; trigger(val, vname);}
-        });
-      })(vname, trigger);
+      return handler;
     };
   })();
 }
