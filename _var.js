@@ -4,7 +4,6 @@
   released under MIT license
   Yufei Liu (yufeiliu.com)
 */
-
 if (typeof(_var)==="undefined") {
   var _var;
   (function() {
@@ -70,6 +69,7 @@ if (typeof(_var)==="undefined") {
           if (typeof(target)==="number") {
             self.bindings[vname].splice(target,1);
           } else {
+            if (typeof(self.bindings[vname])==="undefined") return handler;
             for (var i = 0; i < self.bindings[vname].length; i++) {
               if (self.bindings[vname][i]===target) {
                 self.bindings[vname].splice(i,1);
