@@ -1,6 +1,6 @@
 /*
   _var.js
-  Cool variable binding to DOM element/functions
+  A javascript library for seamlessly binding variables to DOM elements and functions
   released under MIT license
   Yufei Liu (yufeiliu.com)
 */
@@ -52,11 +52,18 @@ if (typeof(_var)==="undefined") {
         }
       }
 
+      var needInit = typeof(obj[base])!=="undefined";
+      if (needInit) {
+        console.log(bindings[vname]);
+        trigger(obj[base], vname);
+      }
+
       if (skip) return;
       (function(vname, trigger) {
         var bound;
+        if (needInit) bound = obj[base];
         Object.defineProperty(obj, base, {
-          get: function() {return bound},
+          get: function() {return bound;},
           set: function(val) {bound = val; trigger(val, vname);}
         });
       })(vname, trigger);

@@ -1,6 +1,6 @@
 <!--
 Demo for _var - a javascript library for seamless variable-to-DOM binding
-@yufeiliu
+Yufei Liu (yufeiliu.com)
 released under MIT license
 -->
 <html>
@@ -27,14 +27,18 @@ strong {
 </div>
 
 <script>
+	counter = 0;
 	_var("counter", document.getElementById("clock-view"));
 
-	counter = 0;
+	//Reset after 30 seconds
+	_var("counter", function(val) { if (counter==30) counter = 1;} );
+
 
 	function startTimer() {
 		counter++;
 		setTimeout('startTimer()',1000);
 	}
 	startTimer();
+
 </script>
 </html>
