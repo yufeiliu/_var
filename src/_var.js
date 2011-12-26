@@ -47,6 +47,7 @@ if (typeof(_var)==="undefined") {
           //TODO: check for already existing binding
           self.bindings[vname].push(target);
 
+          //variable already defined
           var needInit = typeof(obj[base])!=="undefined";
           if (needInit) {
             trigger(obj[base], vname);

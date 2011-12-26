@@ -1,5 +1,6 @@
 var $test = document.getElementById("test1");
-var something = "hello";
+var obj = {prop:1};
+something = "hello";
 
 test('declaring', function() {
 
@@ -8,8 +9,7 @@ test('declaring', function() {
 	ok(newVal == 1, "declare new variable")
 
 	_var("something").bind($test);
-	something = 1;
-	ok(something==1, "modify existing variable")
+	ok($test.innerHTML=="hello", "modify existing variable")
 });
 
 test('binding', function() {
@@ -22,6 +22,12 @@ test('binding', function() {
     ok($test.innerHTML==1, 'variable bound to DOM element');
     ok(recorded==1, 'variable bound to function');
     ok(_var("sampleVar").bindings.length==2, 'two targets bound')
+
+
+    _var("obj.prop").bind($test);
+    ok($test.innerHTML==1, "object property bound to DOM element, initialization");
+    obj.prop=2;
+    ok($test.innerHTML==2, "object property bound to DOM element, updating");
 });
 
 test('unbinding', function() {
@@ -35,4 +41,9 @@ test('unbinding', function() {
     ok($test.innerHTML!=2, 'variable unbound to DOM element');
     ok(recorded==null, 'variable unbound to function');
     ok(_var("sampleVar2").bindings.length==0, 'two targets bound')
+
+
+    _var("sampleVar3").bind($test).bind(f).unbind(1);
+    sampleVar3 = 3;
+    ok(recorded==null, 'variable unbound using indexed argument');
 });
