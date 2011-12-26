@@ -24,12 +24,15 @@ strong {
 
 <div id="clock-container">
 	It has been <strong id="clock-view"></strong> seconds since you refereshed this page.
+	<br/>
+	Works on input box as well: <input type="text" id="textbox" />
 </div>
 
 <script>
 	counter = 0;
 	_var("counter")
 		.bind(document.getElementById("clock-view"))
+		.bind(document.getElementById("textbox"))
 		//Remove binding after 30 seconds
 		.bind(function(val) {
 			if (val==30) {

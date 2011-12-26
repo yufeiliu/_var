@@ -9,18 +9,19 @@ if (typeof(_var)==="undefined") {
   (function() {
     bindings = {};
     _var = function() {
-
       if (arguments.length<1) return this.bindings;
       var vname = arguments[0];
 
       var self = this;
       var handler = {
         bind: function(target) {
-
           var triggerSingle = function(val,cur) {
-            if (cur && {}.toString.call(cur)==='[object Function]') {
+            if (!cur) return;
+            if ({}.toString.call(cur)==='[object Function]') {
               cur(val);
-            } else if (cur && cur.tagName && cur.nodeName) {
+            } else if (cur.tagName.toUpperCase()==='INPUT' && cur.nodeName) {
+              cur.value = val;
+            } else if (cur.tagName && cur.nodeName) {
               cur.innerHTML = val;
             }
           }
