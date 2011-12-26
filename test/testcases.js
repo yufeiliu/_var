@@ -28,6 +28,14 @@ test('binding', function() {
     ok($test.innerHTML==1, "object property bound to DOM element, initialization");
     obj.prop=2;
     ok($test.innerHTML==2, "object property bound to DOM element, updating");
+
+    var sum = 0;
+    var stateful = function(e) {sum+=e};
+	sampleStateful = 1;
+	_var("sampleStateful").bind(stateful);
+	sampleStateful = 2;
+	_var("sampleStateful").bind($test);
+	ok(sum==3, "bindings initializations do not repeat unnecessarily");
 });
 
 test('unbinding', function() {

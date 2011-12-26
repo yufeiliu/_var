@@ -16,14 +16,19 @@ if (typeof(_var)==="undefined") {
       var self = this;
       var handler = {
         bind: function(target) {
+
+          var triggerSingle = function(val,cur) {
+            if (cur && {}.toString.call(cur)==='[object Function]') {
+              cur(val);
+            } else if (cur && cur.tagName && cur.nodeName) {
+              cur.innerHTML = val;
+            }
+          }
+
           var trigger = function(val, vname) {
             for (var i=0; i<self.bindings[vname].length; i++) {
               var cur = self.bindings[vname][i];
-              if (cur && {}.toString.call(cur)==='[object Function]') {
-                cur(val);
-              } else if (cur && cur.tagName && cur.nodeName) {
-                cur.innerHTML = val;
-              }
+              triggerSingle(val,cur);
             }
           };
 
@@ -44,13 +49,12 @@ if (typeof(_var)==="undefined") {
             if (self.bindings[vname][i]===target) return handler;
           }
 
-          //TODO: check for already existing binding
           self.bindings[vname].push(target);
 
           //variable already defined
           var needInit = typeof(obj[base])!=="undefined";
           if (needInit) {
-            trigger(obj[base], vname);
+            triggerSingle(obj[base], target);
           }
 
           if (skip) return handler;
